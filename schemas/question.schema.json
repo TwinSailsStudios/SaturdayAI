@@ -1,0 +1,248 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://apexsat.app/schemas/question.schema.json",
+  "title": "Apex SAT Validated Question",
+  "description": "The engine's primary output. Every item must pass the validation gate in prompts/content-engine.system.md before emission; the backend re-validates on ingest and rejects on any failure.",
+  "type": "object",
+  "required": [
+    "id", "schema_version", "assessment", "section", "domain", "skill",
+    "difficulty", "module_target", "format", "prompt", "explanation", "provenance"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string" },
+    "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "assessment": { "type": "string", "enum": ["SAT", "PSAT_NMSQT", "PSAT_10", "PSAT_8_9"] },
+    "section": { "type": "string", "enum": ["reading_writing", "math"] },
+    "domain": { "$ref": "#/$defs/domain" },
+    "skill": { "$ref": "#/$defs/skill" },
+    "difficulty": { "type": "string", "enum": ["easy", "medium", "hard"] },
+    "module_target": { "type": "string", "enum": ["module_1", "module_2_lower", "module_2_upper", "practice_only"] },
+    "format": { "type": "string", "enum": ["multiple_choice", "student_produced_response"] },
+
+    "stimulus": {
+      "type": ["string", "null"],
+      "description": "RW passage (target 25-150 words) or Math scenario. Must be self-contained: no outside knowledge, no reference to material not present."
+    },
+    "stimulus_word_count": { "type": ["integer", "null"], "minimum": 0 },
+    "stimulus_data": {
+      "type": ["object", "null"],
+      "description": "Structured table or graph data. Charts are emitted as data, never as prose descriptions of a picture.",
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "type": "string", "enum": ["table", "scatter", "line", "bar"] },
+        "title": { "type": "string" },
+        "columns": { "type": "array", "items": { "type": "string" } },
+        "rows": { "type": "array", "items": { "type": "array", "items": { "type": ["string", "number"] } } },
+        "axis_labels": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": { "x": { "type": "string" }, "y": { "type": "string" } }
+        },
+        "notes": { "type": "string" }
+      }
+    },
+
+    "prompt": { "type": "string", "description": "The question stem." },
+
+    "options": {
+      "type": "array",
+      "description": "Required for multiple_choice; exactly 4, exactly one correct, every distractor trap-mapped.",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["id", "text", "is_correct"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "enum": ["A", "B", "C", "D"] },
+          "text": { "type": "string" },
+          "is_correct": { "type": "boolean" },
+          "trap_id": { "$ref": "#/$defs/trap_id" },
+          "rationale": {
+            "type": "string",
+            "description": "For the correct option: why it is defensible. For a distractor: the exact reasoning path that produces it."
+          }
+        },
+        "allOf": [
+          {
+            "if": { "properties": { "is_correct": { "const": false } } },
+            "then": { "required": ["trap_id", "rationale"] }
+          }
+        ]
+      }
+    },
+
+    "acceptable_answers": {
+      "type": "array",
+      "description": "Required for student_produced_response. Every accepted equivalent form, each individually enterable within the digital entry limits.",
+      "minItems": 1,
+      "items": { "type": "string", "maxLength": 6 }
+    },
+    "spr_entry_check": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "fits_character_limit": { "type": "boolean" },
+        "has_negative_value": { "type": "boolean" },
+        "is_repeating_decimal": { "type": "boolean" },
+        "multiple_correct_values_stated_in_prompt": { "type": "boolean" }
+      }
+    },
+
+    "explanation": {
+      "type": "object",
+      "required": ["trap_first", "divergence_step", "correct_path", "remediation_cue"],
+      "additionalProperties": false,
+      "description": "Ordered deliberately: the wrong path is named before the right one so a confident student must recognise before they correct.",
+      "properties": {
+        "trap_first": { "type": "string" },
+        "divergence_step": { "type": "string" },
+        "correct_path": { "type": "string" },
+        "key_move": { "type": "string" },
+        "remediation_cue": { "type": "string" }
+      }
+    },
+
+    "desmos": {
+      "type": ["object", "null"],
+      "description": "Required on every Math item. See docs/06-desmos-academy.md.",
+      "required": ["recommended"],
+      "additionalProperties": false,
+      "properties": {
+        "recommended": { "type": "boolean" },
+        "tier": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "play": { "type": "string", "pattern": "^T[1-5]\\.[A-Z_]+$" },
+        "expressions": { "type": "array", "items": { "type": "string" } },
+        "read_off": { "type": "string" },
+        "time_saved_estimate_seconds": { "type": "integer", "minimum": 0 },
+        "restraint_note": {
+          "type": ["string", "null"],
+          "description": "Required when recommended is false: why the tool loses here. This is how Tier 5 restraint is taught during ordinary practice."
+        }
+      }
+    },
+
+    "targets_trap": {
+      "oneOf": [{ "$ref": "#/$defs/trap_id" }, { "type": "null" }],
+      "description": "Set when the item was authored to fire a specific trap."
+    },
+    "clone_of": {
+      "type": ["string", "null"],
+      "description": "Source question id when this item is a Mistake Clone."
+    },
+    "clone_rung": {
+      "type": ["string", "null"],
+      "enum": ["scaffolded", "neutral", "adversarial", null]
+    },
+
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "estimated_time_seconds": { "type": "integer", "minimum": 5, "maximum": 300 },
+        "calculator_recommended": { "type": "boolean" },
+        "reading_level_grade": { "type": "number" }
+      }
+    },
+
+    "provenance": {
+      "type": "object",
+      "required": ["source", "generated_at", "gate_passed"],
+      "additionalProperties": false,
+      "properties": {
+        "source": { "type": "string", "enum": ["apex_generated", "apex_authored", "imported"] },
+        "generated_at": { "type": "string", "format": "date-time" },
+        "engine_version": { "type": "string" },
+        "gate_passed": {
+          "type": "array",
+          "description": "IDs of the validation gate checks the engine ran and passed. The backend re-runs them.",
+          "items": { "type": "string" }
+        },
+        "bank_status": {
+          "type": "string",
+          "enum": ["candidate", "practice_pool", "sim_pool", "retired"],
+          "default": "candidate",
+          "description": "New items enter as candidates and are promoted to sim_pool only after behaving in practice. Generated items never debut in a simulation."
+        }
+      }
+    }
+  },
+
+  "allOf": [
+    {
+      "if": { "properties": { "format": { "const": "multiple_choice" } } },
+      "then": { "required": ["options"] }
+    },
+    {
+      "if": { "properties": { "format": { "const": "student_produced_response" } } },
+      "then": {
+        "required": ["acceptable_answers"],
+        "properties": { "section": { "const": "math" } }
+      }
+    },
+    {
+      "if": { "properties": { "section": { "const": "math" } } },
+      "then": { "required": ["desmos"] }
+    },
+    {
+      "if": { "properties": { "section": { "const": "reading_writing" } } },
+      "then": {
+        "required": ["stimulus", "options"],
+        "properties": { "format": { "const": "multiple_choice" } }
+      }
+    }
+  ],
+
+  "$defs": {
+    "domain": {
+      "type": "string",
+      "enum": [
+        "rw.information_and_ideas",
+        "rw.craft_and_structure",
+        "rw.expression_of_ideas",
+        "rw.standard_english_conventions",
+        "math.algebra",
+        "math.advanced",
+        "math.psda",
+        "math.geometry_trig"
+      ]
+    },
+    "skill": {
+      "type": "string",
+      "enum": [
+        "rw.information_and_ideas.central_ideas_and_details",
+        "rw.information_and_ideas.command_of_evidence_textual",
+        "rw.information_and_ideas.command_of_evidence_quantitative",
+        "rw.information_and_ideas.inferences",
+        "rw.craft_and_structure.words_in_context",
+        "rw.craft_and_structure.text_structure_and_purpose",
+        "rw.craft_and_structure.cross_text_connections",
+        "rw.expression_of_ideas.rhetorical_synthesis",
+        "rw.expression_of_ideas.transitions",
+        "rw.standard_english_conventions.boundaries",
+        "rw.standard_english_conventions.form_structure_and_sense",
+        "math.algebra.linear_equations_one_var",
+        "math.algebra.linear_equations_two_vars",
+        "math.algebra.linear_functions",
+        "math.algebra.systems_two_linear",
+        "math.algebra.linear_inequalities",
+        "math.advanced.equivalent_expressions",
+        "math.advanced.nonlinear_equations_and_systems",
+        "math.advanced.nonlinear_functions",
+        "math.psda.ratios_rates_proportions_units",
+        "math.psda.percentages",
+        "math.psda.one_variable_data",
+        "math.psda.two_variable_data",
+        "math.psda.probability_and_conditional",
+        "math.psda.inference_and_margin_of_error",
+        "math.psda.evaluating_statistical_claims",
+        "math.geometry_trig.area_and_volume",
+        "math.geometry_trig.lines_angles_triangles",
+        "math.geometry_trig.right_triangles_and_trig",
+        "math.geometry_trig.circles"
+      ]
+    },
+    "trap_id": { "type": "string", "pattern": "^(MATH|RW)_[A-Z_]+$" }
+  }
+}

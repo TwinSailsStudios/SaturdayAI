@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://apexsat.app/schemas/tutor-turn.schema.json",
+  "title": "Apex SAT Socratic Tutor Turn",
+  "description": "One tutor response. Runs client-side on the user's BYOK key. Never reachable during an in-progress Test Sim or before a question is answered.",
+  "type": "object",
+  "required": ["move", "escalation_level", "utterance", "reveals_answer"],
+  "additionalProperties": false,
+  "properties": {
+    "move": {
+      "type": "string",
+      "enum": ["probe", "narrow", "hint", "worked_step", "micro_lesson", "confirm", "handoff"]
+    },
+    "escalation_level": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4,
+      "description": "1 probe, 2 narrow, 3 targeted hint, 4 one worked step. Rungs are never skipped unless engine_directives.allow_reveal is set or the student has two failed attempts on this item."
+    },
+    "utterance": {
+      "type": "string",
+      "description": "Student-facing text. At most one question per turn."
+    },
+    "references": {
+      "type": "array",
+      "description": "response_ids from recent_errors that this turn draws on. Naming a real pattern is content; computing a rate is not.",
+      "items": { "type": "string" }
+    },
+    "trap_named": {
+      "oneOf": [{ "type": "string", "pattern": "^(MATH|RW)_[A-Z_]+$" }, { "type": "null" }]
+    },
+    "next_expected_student_action": {
+      "type": "string",
+      "enum": ["answer_probe", "retry_item", "run_desmos_play", "read_micro_lesson", "none"]
+    },
+    "desmos_play": {
+      "type": ["string", "null"],
+      "pattern": "^T[1-5]\\.[A-Z_]+$"
+    },
+    "reveals_answer": {
+      "type": "boolean",
+      "description": "True only after a second explicit request from the student, or when allow_reveal is set. A tutor that stonewalls a student who has decided to stop working gets closed, not obeyed."
+    },
+    "engine_signals": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/engine_signal" }
+    }
+  },
+  "$defs": {
+    "engine_signal": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "trap_recurrence",
+            "trap_cleared",
+            "prerequisite_gap",
+            "state_disagreement",
+            "scale_mismatch",
+            "incomplete_student_model"
+          ]
+        },
+        "note": { "type": "string" }
+      }
+    }
+  }
+}

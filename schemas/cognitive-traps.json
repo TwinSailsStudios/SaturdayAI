@@ -1,0 +1,216 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://apexsat.app/schemas/cognitive-traps.json",
+  "title": "Apex SAT Cognitive Trap Taxonomy",
+  "description": "Single source of truth for distractor trap identifiers. Every generated distractor MUST carry one of these IDs. IDs are append-only and never renamed once shipped: the Student Model, the error log, and the clone engine all join on them.",
+  "version": "1.0.0",
+  "traps": [
+    {
+      "id": "MATH_PREMATURE_STOP",
+      "label": "Premature Calculation Stop",
+      "section": "math",
+      "description": "Student solves correctly for an intermediate quantity and stops, answering with that quantity instead of the one asked for.",
+      "distractor_recipe": "Make the intermediate value an available option. Typical: question asks for x+3, 2x, or the value of a second variable; the distractor is x.",
+      "tell": "Arithmetic is clean; the final translation step is missing.",
+      "remediation_cue": "Re-read the last clause of the question stem before selecting."
+    },
+    {
+      "id": "MATH_SIGN_FLIP",
+      "label": "Sign Error on Transposition",
+      "section": "math",
+      "description": "A term changes sign incorrectly when moved across the equals sign, distributed, or factored out.",
+      "distractor_recipe": "Offer the correct magnitude with the opposite sign.",
+      "tell": "Answer is the exact negative of the correct value.",
+      "remediation_cue": "Distribute the negative explicitly instead of mentally."
+    },
+    {
+      "id": "MATH_UNIT_MISMATCH",
+      "label": "Unit or Scale Mismatch",
+      "section": "math",
+      "description": "Student computes in the given units but the question asks for different units, or ignores a per-unit conversion.",
+      "distractor_recipe": "Offer the value in the unconverted unit (minutes vs hours, cm vs m, per-item vs per-dozen).",
+      "tell": "Answer differs from correct by a clean conversion factor.",
+      "remediation_cue": "Circle the unit in the question before computing."
+    },
+    {
+      "id": "MATH_EXTRANEOUS_ROOT",
+      "label": "Extraneous or Discarded Root",
+      "section": "math",
+      "description": "Student accepts a root that fails the original equation, or reports one root when both are valid (or vice versa).",
+      "distractor_recipe": "Offer the extraneous solution, or the sum of both roots when only one is valid.",
+      "tell": "Answer satisfies the squared/cleared form but not the original.",
+      "remediation_cue": "Substitute the candidate back into the original equation."
+    },
+    {
+      "id": "MATH_DOMAIN_IGNORED",
+      "label": "Domain or Context Constraint Ignored",
+      "section": "math",
+      "description": "Student produces a mathematically valid answer that the real-world context forbids (negative count, fractional person, time before start).",
+      "distractor_recipe": "Offer the context-invalid root as a plausible option.",
+      "tell": "Answer is negative or non-integer in a counting context.",
+      "remediation_cue": "Ask what the variable physically represents."
+    },
+    {
+      "id": "MATH_PERCENT_BASE_SWAP",
+      "label": "Percent Base Swap",
+      "section": "math",
+      "description": "Percent change computed against the wrong base, or successive percent changes summed instead of compounded.",
+      "distractor_recipe": "Offer the value obtained by using the new value as the base, or by adding the two percentages.",
+      "tell": "Answer is close to correct but consistently off in one direction.",
+      "remediation_cue": "Name the base out loud: 'percent of what?'"
+    },
+    {
+      "id": "MATH_PROPORTION_INVERSION",
+      "label": "Inverted Ratio or Rate",
+      "section": "math",
+      "description": "Ratio set up upside down; rate multiplied where it should be divided.",
+      "distractor_recipe": "Offer the reciprocal-derived value.",
+      "tell": "Answer is the reciprocal relationship applied to the same numbers.",
+      "remediation_cue": "Write the rate with units attached and cancel them."
+    },
+    {
+      "id": "MATH_GRAPH_MISREAD",
+      "label": "Graph or Table Misread",
+      "section": "math",
+      "description": "Axis scale, gridline value, intercept, or table header misread.",
+      "distractor_recipe": "Offer the value that results from assuming each gridline is 1, or from swapping the axes.",
+      "tell": "Answer maps to a real feature of the graph, just the wrong one.",
+      "remediation_cue": "State the value of one gridline before reading any point."
+    },
+    {
+      "id": "MATH_FORM_MISINTERPRETED",
+      "label": "Equation Form Misinterpreted",
+      "section": "math",
+      "description": "Reads a parameter from the wrong form — treats vertex-form h as a y-value, slope-intercept b as a slope, factored-form root as an intercept of the wrong axis.",
+      "distractor_recipe": "Offer the parameter as read from the wrong slot.",
+      "tell": "Answer is a number that literally appears in the given equation.",
+      "remediation_cue": "Name the form before extracting anything from it."
+    },
+    {
+      "id": "MATH_ANSWER_FORMAT",
+      "label": "Answer Format Violation",
+      "section": "math",
+      "description": "Correct value, unenterable or misformatted response (percent sign, mixed number, wrong rounding, exceeded character limit).",
+      "distractor_recipe": "SPR only — tracked as a response-level trap, not an option-level one.",
+      "tell": "Response is mathematically right and mechanically rejected.",
+      "remediation_cue": "Convert to decimal or improper fraction before entering."
+    },
+    {
+      "id": "MATH_ARITHMETIC_SLIP",
+      "label": "Arithmetic Slip",
+      "section": "math",
+      "description": "Method correct, computation wrong. The residual category.",
+      "distractor_recipe": "Use sparingly — at most one option per item, and only with a specific plausible slip modelled.",
+      "tell": "No conceptual pattern; does not recur on the same skill.",
+      "remediation_cue": "Verify on Desmos rather than re-checking by hand."
+    },
+    {
+      "id": "RW_COMMA_SPLICE",
+      "label": "Boundary Punctuation — Comma Splice",
+      "section": "reading_writing",
+      "description": "Joins two independent clauses with a comma (or with a comma plus a conjunctive adverb such as 'however').",
+      "distractor_recipe": "Offer the spliced version alongside the correctly punctuated one; vary only the boundary mark.",
+      "tell": "Both clauses stand alone as sentences.",
+      "remediation_cue": "Cover each side of the mark and ask whether it is a complete sentence."
+    },
+    {
+      "id": "RW_SUPPLEMENT_MISMATCH",
+      "label": "Unpaired Supplement Punctuation",
+      "section": "reading_writing",
+      "description": "Non-essential element opened with one mark and closed with another (comma…dash), or closed not at all.",
+      "distractor_recipe": "Offer mismatched pairs that read naturally aloud.",
+      "tell": "Removing the supplement leaves a stray mark.",
+      "remediation_cue": "Delete the supplement and check the sentence still works."
+    },
+    {
+      "id": "RW_SUBJECT_VERB_DISTANCE",
+      "label": "Subject–Verb Agreement Across Distance",
+      "section": "reading_writing",
+      "description": "Verb agrees with an intervening noun rather than the true subject.",
+      "distractor_recipe": "Place a prepositional phrase with an opposite-number noun between subject and verb.",
+      "tell": "The wrong verb agrees with the nearest noun.",
+      "remediation_cue": "Strike out every prepositional phrase, then read subject and verb adjacent."
+    },
+    {
+      "id": "RW_MODIFIER_DANGLE",
+      "label": "Dangling or Misplaced Modifier",
+      "section": "reading_writing",
+      "description": "Introductory modifier attaches to the wrong noun.",
+      "distractor_recipe": "Offer a version whose subject is the logical actor's possession rather than the actor.",
+      "tell": "The sentence is grammatical but describes an impossible actor.",
+      "remediation_cue": "Ask who or what performed the opening phrase."
+    },
+    {
+      "id": "RW_TRANSITION_DIRECTION",
+      "label": "Transition Logical Direction",
+      "section": "reading_writing",
+      "description": "Selects a contrast transition where the logic continues, or a causal one where the relation is merely sequential.",
+      "distractor_recipe": "Offer one transition from each logical family (contrast, continuation, cause, example) so only relation-reading resolves it.",
+      "tell": "Choice is idiomatic in isolation but reverses the paragraph's logic.",
+      "remediation_cue": "Summarise both sentences in four words each, then name the relation."
+    },
+    {
+      "id": "RW_OUTSIDE_KNOWLEDGE",
+      "label": "Outside Knowledge Import",
+      "section": "reading_writing",
+      "description": "Chooses an option that is true in the world but unsupported by the text.",
+      "distractor_recipe": "Craft a factually reasonable statement the passage never licenses.",
+      "tell": "Student cannot point to a line supporting the choice.",
+      "remediation_cue": "Underline the words in the text that force the answer."
+    },
+    {
+      "id": "RW_SCOPE_ERROR",
+      "label": "Scope Too Broad or Too Narrow",
+      "section": "reading_writing",
+      "description": "Selects a detail as the main idea, or a sweeping generalisation the text supports only locally.",
+      "distractor_recipe": "Pair one true-but-minor detail with one over-generalised claim.",
+      "tell": "Choice is accurate about one sentence and wrong about the passage.",
+      "remediation_cue": "Ask whether the option covers the whole text or one line."
+    },
+    {
+      "id": "RW_EXTREME_LANGUAGE",
+      "label": "Unsupported Absolute",
+      "section": "reading_writing",
+      "description": "Selects an option whose hedging is stronger than the text's ('proves', 'always', 'never', 'the only').",
+      "distractor_recipe": "Take a correct claim and strengthen one qualifier.",
+      "tell": "Difference between correct and chosen is a single modal word.",
+      "remediation_cue": "Circle the qualifier in every option before choosing."
+    },
+    {
+      "id": "RW_HALF_RIGHT",
+      "label": "Half-Right Option",
+      "section": "reading_writing",
+      "description": "Option's first clause matches the text and its second clause does not; student stops reading at the match.",
+      "distractor_recipe": "Build a two-clause option with a correct opening and a wrong completion.",
+      "tell": "Student can defend the first half of the choice only.",
+      "remediation_cue": "Evaluate every clause of an option, not the first."
+    },
+    {
+      "id": "RW_COMMON_MEANING",
+      "label": "Words in Context — Common Meaning",
+      "section": "reading_writing",
+      "description": "Selects the word's most frequent dictionary sense rather than the sense the sentence requires.",
+      "distractor_recipe": "Include a word whose everyday meaning fits the topic but not the syntactic slot.",
+      "tell": "Choice is the word the student would have used casually.",
+      "remediation_cue": "Predict a replacement word before reading the options."
+    },
+    {
+      "id": "RW_EVIDENCE_TOPIC_MATCH",
+      "label": "Evidence Matches Topic, Not Claim",
+      "section": "reading_writing",
+      "description": "Selects data or a quotation that concerns the right subject but does not support the specific claim.",
+      "distractor_recipe": "Offer a true reading of the table that is irrelevant to the stated hypothesis.",
+      "tell": "Student justifies the choice by naming the topic, not the logical link.",
+      "remediation_cue": "State the claim in one sentence, then ask what would have to be true."
+    },
+    {
+      "id": "RW_SYNTHESIS_GOAL_IGNORED",
+      "label": "Rhetorical Goal Ignored",
+      "section": "reading_writing",
+      "description": "In Rhetorical Synthesis, selects an accurate sentence that does not serve the stated rhetorical goal.",
+      "distractor_recipe": "Offer options that are all factually consistent with the notes; only one serves the goal.",
+      "tell": "All options are true; student picks on fluency.",
+      "remediation_cue": "Read the goal clause last and treat it as the only criterion."
+    }
+  ]
+}
