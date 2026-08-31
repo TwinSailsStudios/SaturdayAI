@@ -125,9 +125,10 @@ signal that a tutor would contaminate.
 
 * **Accessibility.** Screen-reader behaviour for the split-screen sim and for
   `stimulus_data` tables. Needs a pass before launch, not before build.
-* **Trap taxonomy coverage.** 23 traps is deliberately small. Expect one or two
-  additions after the first cohort's error logs; the append-only rule in
-  [`04`](./04-cognitive-trap-taxonomy.md) §2 covers the mechanics.
+* **Trap taxonomy coverage.** 25 traps is deliberately small. Two were already
+  added at v1.1.0 while authoring the first seed items (see the changelog in
+  [`04`](./04-cognitive-trap-taxonomy.md) §5). Expect more after the first
+  cohort's error logs; the append-only rule in §2 covers the mechanics.
 * **Item images.** `stimulus_data` covers tables and simple plots. Geometry
   figures are not yet representable and will need either a figure DSL or
   authored assets.

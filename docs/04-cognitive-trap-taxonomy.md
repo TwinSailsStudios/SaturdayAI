@@ -1,7 +1,7 @@
 # 04 — Cognitive Trap Taxonomy & the Clone Engine
 
 Source of truth: [`schemas/cognitive-traps.json`](../schemas/cognitive-traps.json)
-(23 traps at v1.0.0 — 11 Math, 12 RW).
+(25 traps at v1.1.0 — 11 Math, 14 RW).
 
 ## 1. Why traps are the primitive
 
@@ -104,7 +104,17 @@ with what they already did, and learns nothing. Leading with the wrong path
 forces recognition before correction. See
 [`05-confidence-calibration.md`](./05-confidence-calibration.md).
 
-## 5. Coverage check
+## 5. Changelog
+
+**v1.1.0** — added `RW_FUSED_SENTENCE` and `RW_BOUNDARY_SUBORDINATION`. Authoring
+the first seed items for the Boundaries skill showed that `RW_COMMA_SPLICE`
+alone could not express two distinct errors that Boundaries items routinely
+test: a join with no punctuation at all, and a join that subordinates a clause
+which must stay independent. Collapsing all three into one ID would have made
+the seed student's `RW_COMMA_SPLICE` history mean "some boundary error",
+which is not a repairable behaviour. Append-only: no existing ID changed.
+
+## 6. Coverage check
 
 The taxonomy is deliberately small. Adding a trap requires evidence that an
 existing one cannot express the behaviour, plus a `distractor_recipe` concrete

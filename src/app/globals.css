@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+/* A single light theme, committed to deliberately: the product's core surface
+   is a reading passage under time pressure, and a half-tuned dark mode is
+   worse than none. */
+:root {
+  color-scheme: light;
+}
+
+@theme {
+  --color-ink: #14171f;
+  --color-muted: #5b6472;
+  --color-line: #e2e5ea;
+  --color-surface: #ffffff;
+  --color-ground: #f6f7f9;
+  --color-accent: #1e4fd8;
+  --color-alert: #b4232a;
+  --color-warn: #a25a05;
+  --color-good: #16714a;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif: ui-serif, Georgia, "Times New Roman", serif;
+}
+
+body {
+  background: var(--color-ground);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Stimulus text is read closely and repeatedly; serif at a generous measure
+   reads better than the UI face. */
+.stimulus {
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+}

@@ -3,7 +3,7 @@
   "$id": "https://apexsat.app/schemas/cognitive-traps.json",
   "title": "Apex SAT Cognitive Trap Taxonomy",
   "description": "Single source of truth for distractor trap identifiers. Every generated distractor MUST carry one of these IDs. IDs are append-only and never renamed once shipped: the Student Model, the error log, and the clone engine all join on them.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "traps": [
     {
       "id": "MATH_PREMATURE_STOP",
@@ -112,6 +112,24 @@
       "distractor_recipe": "Offer the spliced version alongside the correctly punctuated one; vary only the boundary mark.",
       "tell": "Both clauses stand alone as sentences.",
       "remediation_cue": "Cover each side of the mark and ask whether it is a complete sentence."
+    },
+    {
+      "id": "RW_FUSED_SENTENCE",
+      "label": "Boundary Punctuation — Fused Sentence",
+      "section": "reading_writing",
+      "description": "Runs two independent clauses together with no punctuation at all.",
+      "distractor_recipe": "Offer the unpunctuated join alongside the correctly punctuated one, in a sentence whose clauses read smoothly aloud so the boundary is easy to miss.",
+      "tell": "Both sides of the join stand alone as sentences and nothing separates them.",
+      "remediation_cue": "Cover each side of the join and ask whether it is a complete sentence."
+    },
+    {
+      "id": "RW_BOUNDARY_SUBORDINATION",
+      "label": "Improper Subordination at a Boundary",
+      "section": "reading_writing",
+      "description": "Attaches a subordinator or relative pronoun to a clause that must stay independent, producing a fragment or an orphaned relative clause.",
+      "distractor_recipe": "Offer a version that opens the second independent clause with 'which', 'because', or 'although' where no subordination is licensed.",
+      "tell": "The sentence no longer has a main clause, or the relative pronoun has no sensible antecedent.",
+      "remediation_cue": "Find the main verb of the whole sentence; if every clause is subordinated, it is a fragment."
     },
     {
       "id": "RW_SUPPLEMENT_MISMATCH",
