@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://apexsat.app/schemas/generation-request.schema.json",
+  "title": "Apex SAT Generation Request (backend → engine)",
+  "type": "object",
+  "required": ["schema_version", "surface", "student_model"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "surface": {
+      "type": "string",
+      "enum": ["generate.questions", "generate.clone", "explain.question", "desmos.coach"],
+      "description": "tutor.turn uses tutor-turn.schema.json and runs on the user's BYOK key, not this surface."
+    },
+    "student_model": { "$ref": "https://apexsat.app/schemas/student-model.schema.json" },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "count": { "type": "integer", "minimum": 1, "maximum": 30 },
+        "section": { "type": "string", "enum": ["reading_writing", "math", "mixed"] },
+        "skills": { "type": "array", "items": { "type": "string" } },
+        "difficulty": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["easy", "medium", "hard"] }
+        },
+        "module_target": { "type": "string", "enum": ["module_1", "module_2_lower", "module_2_upper", "practice_only"] },
+        "format_mix": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "student_produced_response_share": { "type": "number", "minimum": 0, "maximum": 1 }
+          }
+        },
+        "exclude_question_ids": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "clone_spec": {
+      "type": "object",
+      "description": "Required when surface is generate.clone.",
+      "required": ["source_question", "trap_id"],
+      "additionalProperties": false,
+      "properties": {
+        "source_question": { "$ref": "https://apexsat.app/schemas/question.schema.json" },
+        "trap_id": { "type": "string", "pattern": "^(MATH|RW)_[A-Z_]+$" },
+        "student_selected_option": { "type": ["string", "null"] },
+        "student_certainty": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "rungs": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["scaffolded", "neutral", "adversarial"] }
+        }
+      }
+    },
+    "explain_spec": {
+      "type": "object",
+      "description": "Required when surface is explain.question.",
+      "required": ["question"],
+      "additionalProperties": false,
+      "properties": {
+        "question": { "$ref": "https://apexsat.app/schemas/question.schema.json" },
+        "student_selected_option": { "type": ["string", "null"] },
+        "student_submitted_response": { "type": ["string", "null"] },
+        "student_certainty": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "surface": { "const": "generate.clone" } } },
+      "then": { "required": ["clone_spec"] }
+    },
+    {
+      "if": { "properties": { "surface": { "const": "explain.question" } } },
+      "then": { "required": ["explain_spec"] }
+    }
+  ]
+}

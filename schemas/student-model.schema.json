@@ -1,0 +1,172 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://apexsat.app/schemas/student-model.schema.json",
+  "title": "Apex SAT Student Model (backend → engine snapshot)",
+  "description": "Read-only snapshot passed to the Content Engine on every request. The engine never writes to this object. See docs/03-student-model.md for the behavioural contract of each field.",
+  "type": "object",
+  "required": ["schema_version", "student_profile"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "student_profile": {
+      "type": "object",
+      "required": ["user", "academic_context", "active_target", "current_roadmap_phase"],
+      "additionalProperties": false,
+      "properties": {
+        "user": {
+          "type": "object",
+          "required": ["id"],
+          "additionalProperties": false,
+          "properties": {
+            "id": { "type": "string" },
+            "display_name": {
+              "type": "string",
+              "description": "Tutor copy only. MUST NOT appear in any generated question content."
+            }
+          }
+        },
+        "academic_context": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "school": { "type": "string" },
+            "grade": { "type": "integer", "minimum": 6, "maximum": 12 }
+          }
+        },
+        "active_target": {
+          "type": "object",
+          "required": ["assessment"],
+          "additionalProperties": false,
+          "properties": {
+            "assessment": { "$ref": "#/$defs/assessment" },
+            "scale": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "composite": { "$ref": "#/$defs/range" },
+                "section": { "$ref": "#/$defs/range" }
+              }
+            },
+            "test_date": { "type": "string", "format": "date" }
+          }
+        },
+        "aspirational_goal": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Motivational framing only. Carries no precomputed gap: gaps across differing scales are not meaningful and the engine must not narrate them.",
+          "properties": {
+            "type": { "type": "string", "enum": ["dream_school", "score_target", "scholarship", "team_eligibility"] },
+            "institution": { "type": "string" },
+            "target_score": { "$ref": "#/$defs/scaled_score" },
+            "current_estimate": { "$ref": "#/$defs/scaled_score" }
+          }
+        },
+        "training_availability": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "minutes_per_day": { "type": "integer", "minimum": 5, "maximum": 480 },
+            "days_per_week": { "type": "integer", "minimum": 1, "maximum": 7 }
+          }
+        },
+        "current_roadmap_phase": {
+          "type": "object",
+          "required": ["phase"],
+          "additionalProperties": false,
+          "properties": {
+            "phase": { "type": "string", "enum": ["diagnose", "repair", "build", "sharpen", "simulate"] },
+            "phase_label": { "type": "string" },
+            "week": { "type": "integer", "minimum": 1 },
+            "total_weeks": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "calibration_state": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "flag": {
+              "type": "string",
+              "enum": ["well_calibrated", "high_overconfidence", "high_underconfidence", "ratings_degenerate", "insufficient_data"]
+            },
+            "detail": { "type": "string" },
+            "computed_by": { "type": "string", "const": "backend" }
+          }
+        },
+        "top_cognitive_traps": {
+          "type": "array",
+          "maxItems": 5,
+          "items": { "$ref": "#/$defs/trap_id" }
+        },
+        "recent_errors": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "type": "object",
+            "required": ["response_id", "question_id", "skill"],
+            "additionalProperties": false,
+            "properties": {
+              "response_id": { "type": "string" },
+              "question_id": { "type": "string" },
+              "skill": { "type": "string" },
+              "selected_option": { "type": ["string", "null"] },
+              "correct_option": { "type": ["string", "null"] },
+              "submitted_response": { "type": ["string", "null"], "description": "SPR items" },
+              "certainty": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+              "trap_id": { "$ref": "#/$defs/trap_id" },
+              "time_seconds": { "type": "number", "minimum": 0 }
+            }
+          }
+        },
+        "skill_state": {
+          "type": "object",
+          "description": "Backend-computed mastery evidence keyed by dotted skill id. Evidence, not instruction.",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["state"],
+            "additionalProperties": false,
+            "properties": {
+              "state": { "type": "string", "enum": ["untested", "gap", "developing", "fragile", "solid", "mastered"] },
+              "evidence_count": { "type": "integer", "minimum": 0 }
+            }
+          }
+        },
+        "engine_directives": {
+          "type": "object",
+          "description": "Backend overrides. The engine obeys without negotiating.",
+          "additionalProperties": false,
+          "properties": {
+            "clone_budget": { "type": "integer", "minimum": 0, "maximum": 12 },
+            "allow_reveal": { "type": "boolean" },
+            "suppress_confidence_framing": { "type": "boolean" },
+            "max_questions": { "type": "integer", "minimum": 1, "maximum": 60 }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "assessment": { "type": "string", "enum": ["SAT", "PSAT_NMSQT", "PSAT_10", "PSAT_8_9"] },
+    "range": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": { "type": "integer" }
+    },
+    "scaled_score": {
+      "type": "object",
+      "required": ["value", "scale"],
+      "additionalProperties": false,
+      "description": "A score is meaningless without its scale. The engine refuses arithmetic across differing scales.",
+      "properties": {
+        "value": { "type": "integer" },
+        "scale": { "$ref": "#/$defs/assessment" },
+        "source": { "type": "string", "enum": ["backend_projection", "official_report", "user_stated"] }
+      }
+    },
+    "trap_id": {
+      "type": "string",
+      "pattern": "^(MATH|RW)_[A-Z_]+$",
+      "description": "Must exist in schemas/cognitive-traps.json"
+    }
+  }
+}
