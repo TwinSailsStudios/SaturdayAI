@@ -80,6 +80,14 @@ export async function POST(request: Request) {
   const firedTrap =
     result.trap_id && traps.has(result.trap_id) ? trapInfo(result.trap_id) : null;
 
+  // How often this same trap has already fired. The tutor is allowed to name a
+  // pattern it can see in the log; it is not allowed to compute a rate from it.
+  const priorSameTrap = result.trap_id
+    ? (await repo.listResponses(DEMO_USER_ID, 50)).filter(
+        (r) => r.trap_id === result.trap_id && r.id !== stored.id
+      ).length
+    : 0;
+
   // Review payload. The explanation is authored trap-first (docs/04 §4); it is
   // released only now, with the answer already committed.
   const review = scrubEngineOutput({
@@ -93,6 +101,7 @@ export async function POST(request: Request) {
     trap: firedTrap
       ? { id: firedTrap.id, label: firedTrap.label, tell: firedTrap.tell }
       : null,
+    recent_same_trap: priorSameTrap,
     trap_attribution:
       question.format === "student_produced_response" && !result.is_correct
         ? "item_level"

@@ -62,6 +62,13 @@ export async function POST(request: Request) {
   return NextResponse.json({
     set_id: set.id,
     engine: engine.name,
+    student: {
+      display_name: profile.user.display_name ?? null,
+      assessment: profile.active_target.assessment,
+      calibration_flag: profile.calibration_state?.flag ?? null,
+      phase: profile.current_roadmap_phase.phase,
+      allow_reveal: profile.engine_directives?.allow_reveal ?? false,
+    },
     posture: { phase: profile.current_roadmap_phase.phase, ...posture },
     questions: accepted.map(present),
     // Surfaced rather than swallowed: a rejected item is a content bug and

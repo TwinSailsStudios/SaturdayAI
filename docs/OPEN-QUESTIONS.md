@@ -121,6 +121,33 @@ at launch or deferred.
 Listed as available. Confirm that Academy work does not carry a calibration
 signal that a tutor would contaminate.
 
+### C8. Desmos API licensing — **blocking before launch**
+
+The embedded calculator currently loads the Desmos Graphing Calculator with the
+public **demo API key** that Desmos publishes for development. That is fine for
+building and evaluating; it is not a licence to ship to students.
+
+**Needed:** a Desmos API partnership and a production key, set via
+`NEXT_PUBLIC_DESMOS_API_KEY`. The API version is also pinned
+(`NEXT_PUBLIC_DESMOS_API_VERSION`, default `v1.11`) and should be confirmed
+against whatever Desmos currently publishes.
+
+### C9. Tutor model and effort
+
+The tutor calls `claude-opus-5` at `effort: "medium"` with a 4000-token ceiling.
+Medium rather than the default high because the student pays for their own
+tokens and a tutor turn is a few sentences and one question. **Confirm** that
+tradeoff against real tutoring transcripts before launch — if quality suffers on
+harder items, effort is the first dial, not the model.
+
+### C10. Sim form length
+
+The Test Sim runs a shortened form (RW 2×4, Math 2×3) at the real per-question
+pace, because the authored bank cannot fill a 98-question administration. The
+report deliberately gives raw counts and no scaled score. **Needed:** the bank
+depth to run a full form, and the raw→scaled conversion tables per assessment,
+before a sim result can be presented as a score.
+
 ## D. Deferred / non-blocking
 
 * **Accessibility.** Screen-reader behaviour for the split-screen sim and for

@@ -2,8 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Card, Pill } from "@/components/ui";
+import DesmosCalculator from "@/components/DesmosCalculator";
+import TutorPanel from "@/components/TutorPanel";
 import { entryLimitFor } from "@/lib/practice/grade";
-import type { PresentedQuestion, Review, SetResponse } from "./types";
+import type { TutorContext } from "@/lib/tutor/client";
+import type { PresentedQuestion, Review, SetResponse, StudentSummary } from "./types";
 
 const CERTAINTY_LABELS: Record<number, string> = {
   1: "Guessed",
@@ -25,6 +28,7 @@ export default function PracticeClient() {
   const [certainty, setCertainty] = useState<number | null>(null);
   const [review, setReview] = useState<Review | null>(null);
   const [cloneNote, setCloneNote] = useState<string | null>(null);
+  const [calcOpen, setCalcOpen] = useState(false);
 
   const startedAt = useRef<number>(Date.now());
   const question = queue[index] ?? null;
@@ -61,6 +65,7 @@ export default function PracticeClient() {
     setCertainty(null);
     setReview(null);
     setCloneNote(null);
+    setCalcOpen(false);
   }
 
   async function submit() {
@@ -224,23 +229,45 @@ export default function PracticeClient() {
           </div>
         )}
 
-        {question.desmos && (
-          <p className="mt-4 rounded border border-line bg-ground p-3 text-xs text-muted">
-            {question.desmos.recommended ? (
-              <>
-                <strong className="text-ink">Desmos {question.desmos.play}</strong> — a graph wins
-                here.
-                {question.desmos.expressions?.length ? (
-                  <span className="ml-1 font-mono">{question.desmos.expressions.join("  ·  ")}</span>
-                ) : null}
-              </>
-            ) : (
-              <>
-                <strong className="text-ink">Desmos won&rsquo;t help here.</strong> Solve it
-                directly — the setup costs more than the solve.
-              </>
+        {question.section === "math" && (
+          <div className="mt-4">
+            <div className="flex flex-wrap items-center gap-3 rounded border border-line bg-ground p-3">
+              <p className="flex-1 text-xs text-muted">
+                {question.desmos?.recommended ? (
+                  <>
+                    <strong className="text-ink">Desmos {question.desmos.play}</strong> — a graph
+                    wins here.
+                    {question.desmos.expressions?.length ? (
+                      <span className="ml-1 font-mono">
+                        {question.desmos.expressions.join("  ·  ")}
+                      </span>
+                    ) : null}
+                  </>
+                ) : (
+                  <>
+                    <strong className="text-ink">Desmos won&rsquo;t help here.</strong> Solve it
+                    directly — the setup costs more than the solve. It stays available anyway,
+                    because on test day it always is.
+                  </>
+                )}
+              </p>
+              <button
+                onClick={() => setCalcOpen((o) => !o)}
+                className="rounded border border-line bg-surface px-3 py-1.5 text-xs hover:border-muted"
+              >
+                {calcOpen ? "Hide calculator" : "Open calculator"}
+              </button>
+            </div>
+            {calcOpen && (
+              <div className="mt-2">
+                <DesmosCalculator
+                  expressions={
+                    question.desmos?.recommended ? (question.desmos.expressions ?? []) : []
+                  }
+                />
+              </div>
             )}
-          </p>
+          </div>
         )}
       </Card>
 
@@ -277,23 +304,64 @@ export default function PracticeClient() {
         </Card>
       )}
 
-      {review && <ReviewPanel review={review} onNext={next} onClone={requestClone} note={cloneNote} />}
+      {review && (
+        <ReviewPanel
+          review={review}
+          question={question}
+          student={set.student}
+          studentAnswer={
+            question.format === "multiple_choice"
+              ? `option ${selected ?? "—"}${optionText(question, selected)}`
+              : typed || "(blank)"
+          }
+          onNext={next}
+          onClone={requestClone}
+          note={cloneNote}
+        />
+      )}
     </div>
   );
 }
 
 function ReviewPanel({
   review,
+  question,
+  student,
+  studentAnswer,
   onNext,
   onClone,
   note,
 }: {
   review: Review;
+  question: PresentedQuestion;
+  student: StudentSummary;
+  studentAnswer: string;
   onNext: () => void;
   onClone: () => void;
   note: string | null;
 }) {
   const tone = (review.quadrant_copy?.tone ?? "info") as "alert" | "warn" | "info" | "good";
+  const tutorContext: TutorContext = {
+    studentName: student.display_name ?? undefined,
+    calibrationFlag: student.calibration_flag ?? undefined,
+    phase: student.phase,
+    assessment: student.assessment,
+    question: {
+      id: question.id,
+      skill: question.skill,
+      stimulus: question.stimulus,
+      prompt: question.prompt,
+      options: question.options,
+    },
+    studentAnswer,
+    certainty: review.certainty,
+    isCorrect: review.is_correct,
+    trap: review.trap ? { id: review.trap.id, label: review.trap.label } : null,
+    remediationCue: review.explanation.remediation_cue,
+    desmosPlay: review.desmos?.play ?? null,
+    recentSameTrap: review.recent_same_trap,
+    allowReveal: student.allow_reveal,
+  };
   return (
     <div className="space-y-4">
       <Card
@@ -360,6 +428,8 @@ function ReviewPanel({
         </Card>
       )}
 
+      <TutorPanel context={tutorContext} />
+
       <div className="flex flex-wrap items-center gap-3">
         {review.clone_offer && (
           <button
@@ -379,4 +449,9 @@ function ReviewPanel({
       </div>
     </div>
   );
+}
+
+function optionText(question: PresentedQuestion, selected: string | null): string {
+  const option = question.options.find((o) => o.id === selected);
+  return option ? ` (${option.text})` : "";
 }

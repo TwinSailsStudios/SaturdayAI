@@ -1,7 +1,7 @@
 # 04 — Cognitive Trap Taxonomy & the Clone Engine
 
 Source of truth: [`schemas/cognitive-traps.json`](../schemas/cognitive-traps.json)
-(25 traps at v1.1.0 — 11 Math, 14 RW).
+(26 traps at v1.2.0 — 11 Math, 15 RW).
 
 ## 1. Why traps are the primitive
 
@@ -105,6 +105,13 @@ forces recognition before correction. See
 [`05-confidence-calibration.md`](./05-confidence-calibration.md).
 
 ## 5. Changelog
+
+**v1.2.0** — added `RW_SENSE_REVERSAL`. Authoring Words in Context and
+Inferences items showed that the single most natural distractor for both is the
+clean antonym of the correct choice, and no existing ID named it:
+`RW_TRANSITION_DIRECTION` is scoped to transitions, and filing a reversal under
+`RW_SCOPE_ERROR` would have told a student their problem was breadth when it was
+direction.
 
 **v1.1.0** — added `RW_FUSED_SENTENCE` and `RW_BOUNDARY_SUBORDINATION`. Authoring
 the first seed items for the Boundaries skill showed that `RW_COMMA_SPLICE`

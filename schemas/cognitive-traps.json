@@ -3,7 +3,7 @@
   "$id": "https://apexsat.app/schemas/cognitive-traps.json",
   "title": "Apex SAT Cognitive Trap Taxonomy",
   "description": "Single source of truth for distractor trap identifiers. Every generated distractor MUST carry one of these IDs. IDs are append-only and never renamed once shipped: the Student Model, the error log, and the clone engine all join on them.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "traps": [
     {
       "id": "MATH_PREMATURE_STOP",
@@ -211,6 +211,15 @@
       "distractor_recipe": "Include a word whose everyday meaning fits the topic but not the syntactic slot.",
       "tell": "Choice is the word the student would have used casually.",
       "remediation_cue": "Predict a replacement word before reading the options."
+    },
+    {
+      "id": "RW_SENSE_REVERSAL",
+      "label": "Reversed Sense",
+      "section": "reading_writing",
+      "description": "Selects a word or completion whose meaning runs opposite to the relationship the text establishes — confirming where the text disputes, increasing where it decreases.",
+      "distractor_recipe": "Offer the clean antonym of the correct choice, phrased so it reads naturally in the sentence on its own.",
+      "tell": "The choice is fluent in isolation and inverts the passage's logic.",
+      "remediation_cue": "Predict the direction — supports or opposes, rises or falls — before reading the options."
     },
     {
       "id": "RW_EVIDENCE_TOPIC_MATCH",

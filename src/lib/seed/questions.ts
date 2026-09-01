@@ -625,6 +625,459 @@ export const SEED_QUESTIONS: Question[] = [
       bank_status: "practice_pool",
     },
   },
+  // ---------------------------------------------------------------- q_009
+  {
+    id: "q_009",
+    schema_version: V,
+    assessment: "PSAT_8_9",
+    section: "reading_writing",
+    domain: "rw.craft_and_structure",
+    skill: "rw.craft_and_structure.words_in_context",
+    difficulty: "medium",
+    module_target: "practice_only",
+    format: "multiple_choice",
+    stimulus:
+      "For decades the standard account of the Bronze Age collapse held that a single invading force toppled the eastern Mediterranean's palace economies. Recent excavations have ______ that account rather than overturning it: the destruction layers at different sites are separated by as much as a century, which rules out one campaign but leaves open the possibility of several waves of attackers.",
+    stimulus_word_count: 62,
+    prompt:
+      "Which choice completes the text with the most logical and precise word or phrase?",
+    options: [
+      {
+        id: "A",
+        text: "complicated",
+        is_correct: true,
+        rationale:
+          "The new evidence makes the single-invasion story harder to hold without replacing it — exactly what 'rather than overturning it' sets up.",
+      },
+      {
+        id: "B",
+        text: "corroborated",
+        is_correct: false,
+        trap_id: "RW_SENSE_REVERSAL",
+        rationale:
+          "Reverses the direction. The century-wide spread works against the single-campaign account, not for it.",
+      },
+      {
+        id: "C",
+        text: "summarized",
+        is_correct: false,
+        trap_id: "RW_COMMON_MEANING",
+        rationale:
+          "'Summarize an account' is the phrase that comes to mind first because accounts are things one summarizes. Excavations do not summarize anything.",
+      },
+      {
+        id: "D",
+        text: "demolished",
+        is_correct: false,
+        trap_id: "RW_EXTREME_LANGUAGE",
+        rationale:
+          "Stronger than the sentence licenses — 'rather than overturning it' rules this out explicitly, and the clause is easy to skim past.",
+      },
+    ],
+    explanation: {
+      trap_first:
+        "'Demolished' feels right if you read the first half of the sentence and stop. New evidence contradicting an old theory usually does demolish it, so the word arrives before the rest of the sentence does.",
+      divergence_step:
+        "The sentence has already told you the answer's direction and strength: 'rather than overturning it'. Any word meaning destroy is excluded by that clause, and any word meaning support is excluded by the evidence that follows.",
+      correct_path:
+        "The evidence weakens the account without replacing it — it 'complicated' the account.",
+      key_move: "Predict the word from the sentence before looking at the options.",
+      remediation_cue: "Predict a replacement word before reading the options.",
+    },
+    desmos: null,
+    targets_trap: "RW_EXTREME_LANGUAGE",
+    clone_of: null,
+    clone_rung: null,
+    metadata: { estimated_time_seconds: 60, reading_level_grade: 9 },
+    provenance: {
+      source: "apex_authored",
+      generated_at: GENERATED_AT,
+      engine_version: "seed",
+      gate_passed: [...MC_GATES, "G06_RW_STIMULUS_BOUNDS"],
+      bank_status: "practice_pool",
+    },
+  },
+
+  // ---------------------------------------------------------------- q_010
+  {
+    id: "q_010",
+    schema_version: V,
+    assessment: "PSAT_8_9",
+    section: "reading_writing",
+    domain: "rw.information_and_ideas",
+    skill: "rw.information_and_ideas.central_ideas_and_details",
+    difficulty: "medium",
+    module_target: "practice_only",
+    format: "multiple_choice",
+    stimulus:
+      "Archaeologists studying the Nazca lines long assumed the enormous desert figures were meant to be seen from above. Because no natural vantage point nearby is high enough to take in a whole figure, some researchers now argue that the lines were meant to be walked instead: many of them form a single unbroken path that returns to where it began, a shape better suited to procession than to viewing.",
+    stimulus_word_count: 71,
+    prompt: "Which choice best states the main idea of the text?",
+    options: [
+      {
+        id: "A",
+        text: "No natural vantage point near the Nazca lines is high enough to see an entire figure.",
+        is_correct: false,
+        trap_id: "RW_SCOPE_ERROR",
+        rationale:
+          "A true detail, and the one the text spends a clause on. It is the evidence for the main idea, not the main idea.",
+      },
+      {
+        id: "B",
+        text: "Archaeologists have abandoned every earlier theory about why the Nazca lines were made.",
+        is_correct: false,
+        trap_id: "RW_EXTREME_LANGUAGE",
+        rationale:
+          "'Some researchers now argue' is a long way from 'every earlier theory abandoned'.",
+      },
+      {
+        id: "C",
+        text: "The Nazca lines may be better understood as paths to be walked than as images to be viewed from above.",
+        is_correct: true,
+        rationale:
+          "Captures the shift the whole text is built around, and keeps the text's hedging ('some researchers now argue').",
+      },
+      {
+        id: "D",
+        text: "The Nazca lines were created by large processions of people walking in unbroken paths.",
+        is_correct: false,
+        trap_id: "RW_HALF_RIGHT",
+        rationale:
+          "The first half matches — walking, processions — and the second half asserts how the lines were made, which the text never claims.",
+      },
+    ],
+    explanation: {
+      trap_first:
+        "Option A is the sentence you remember most clearly, because it is the concrete fact in a passage otherwise made of argument. Remembering a detail best is not the same as it being the point.",
+      divergence_step:
+        "Ask what the text is for. Every sentence here exists to set up one shift: from figures-to-be-seen to paths-to-be-walked. A is a step in that argument, not its conclusion.",
+      correct_path:
+        "The passage moves from an old assumption to a new proposal and hedges it — 'some researchers now argue'. Choice C states that shift with the hedging intact.",
+      key_move: "Find the sentence the rest of the passage is serving.",
+      remediation_cue: "Ask whether the option covers the whole text or one line.",
+    },
+    desmos: null,
+    targets_trap: "RW_SCOPE_ERROR",
+    clone_of: null,
+    clone_rung: null,
+    metadata: { estimated_time_seconds: 70, reading_level_grade: 9 },
+    provenance: {
+      source: "apex_authored",
+      generated_at: GENERATED_AT,
+      engine_version: "seed",
+      gate_passed: [...MC_GATES, "G06_RW_STIMULUS_BOUNDS"],
+      bank_status: "practice_pool",
+    },
+  },
+
+  // ---------------------------------------------------------------- q_011
+  {
+    id: "q_011",
+    schema_version: V,
+    assessment: "PSAT_8_9",
+    section: "reading_writing",
+    domain: "rw.information_and_ideas",
+    skill: "rw.information_and_ideas.inferences",
+    difficulty: "medium",
+    module_target: "practice_only",
+    format: "multiple_choice",
+    stimulus:
+      "Honeybees recruited to a food source by a waggle dance often arrive long after the dancer's information could still be accurate, since nectar flow at a patch can stop within an hour. Researchers tracking marked bees found that these late arrivals rarely fed at the advertised patch itself and instead searched the area around it. The finding suggests that the dance works less as a precise set of directions than as ______",
+    stimulus_word_count: 74,
+    prompt: "Which choice most logically completes the text?",
+    options: [
+      {
+        id: "A",
+        text: "a warning that a food source has already been exhausted.",
+        is_correct: false,
+        trap_id: "RW_SENSE_REVERSAL",
+        rationale:
+          "Inverts the dance's purpose. Bees still go and still search — a warning would send them elsewhere entirely.",
+      },
+      {
+        id: "B",
+        text: "a rough indication of where searching is likely to be worthwhile.",
+        is_correct: true,
+        rationale:
+          "Follows from both observations: the bees go to the right area and forage around it rather than at the exact spot.",
+      },
+      {
+        id: "C",
+        text: "a signal that the hive should send out more foragers than usual.",
+        is_correct: false,
+        trap_id: "RW_OUTSIDE_KNOWLEDGE",
+        rationale:
+          "A reasonable-sounding claim about hive behaviour that the text gives no evidence for — nothing here counts foragers.",
+      },
+      {
+        id: "D",
+        text: "the only method by which honeybees are able to locate flowers.",
+        is_correct: false,
+        trap_id: "RW_EXTREME_LANGUAGE",
+        rationale:
+          "'The only method' is an absolute the passage never approaches; the bees in it are searching on their own.",
+      },
+    ],
+    explanation: {
+      trap_first:
+        "The sentence sets up a contrast — 'less as a precise set of directions than as ___' — and it is tempting to fill it with something dramatic. But the blank has to be filled by what the bees actually did.",
+      divergence_step:
+        "Two observations constrain the answer: the bees still went to the area, and they searched around rather than at the patch. Anything that stops them going, or that claims more than the text measured, is out.",
+      correct_path:
+        "Went to the right neighbourhood, searched from there — that is a rough indication of where to look, which is choice B.",
+      key_move: "Let the two stated observations do the eliminating.",
+      remediation_cue: "Underline the words in the text that force the answer.",
+    },
+    desmos: null,
+    targets_trap: "RW_OUTSIDE_KNOWLEDGE",
+    clone_of: null,
+    clone_rung: null,
+    metadata: { estimated_time_seconds: 70, reading_level_grade: 9 },
+    provenance: {
+      source: "apex_authored",
+      generated_at: GENERATED_AT,
+      engine_version: "seed",
+      gate_passed: [...MC_GATES, "G06_RW_STIMULUS_BOUNDS"],
+      bank_status: "practice_pool",
+    },
+  },
+
+  // ---------------------------------------------------------------- q_012
+  {
+    id: "q_012",
+    schema_version: V,
+    assessment: "PSAT_8_9",
+    section: "reading_writing",
+    domain: "rw.information_and_ideas",
+    skill: "rw.information_and_ideas.command_of_evidence_quantitative",
+    difficulty: "medium",
+    module_target: "practice_only",
+    format: "multiple_choice",
+    stimulus:
+      "A student investigated how storage temperature affects how long fresh basil stays usable. She stored identical bunches at four temperatures and recorded the number of days before visible wilting. She concluded that basil keeps longest at a moderate temperature near 10 °C, rather than at colder or warmer temperatures.",
+    stimulus_word_count: 51,
+    stimulus_data: {
+      kind: "table",
+      title: "Days until visible wilting, by storage temperature",
+      columns: ["Storage temperature (°C)", "Days until wilting"],
+      rows: [
+        [2, 6],
+        [10, 12],
+        [18, 7],
+        [26, 3],
+      ],
+    },
+    prompt:
+      "Which choice most effectively uses data from the table to support the student's conclusion?",
+    options: [
+      {
+        id: "A",
+        text: "Basil stored at 10 °C lasted 12 days, longer than at 2 °C (6 days), 18 °C (7 days), or 26 °C (3 days).",
+        is_correct: true,
+        rationale:
+          "The claim is that 10 °C beats both colder and warmer storage, so the support has to reach both directions. This is the only option that does.",
+      },
+      {
+        id: "B",
+        text: "Basil stored at 26 °C lasted only 3 days, the shortest duration of any temperature tested.",
+        is_correct: false,
+        trap_id: "RW_EVIDENCE_TOPIC_MATCH",
+        rationale:
+          "True, and about the right experiment, but it only shows that hot storage is bad. It says nothing about 10 °C being the best.",
+      },
+      {
+        id: "C",
+        text: "Basil stored at 2 °C lasted 6 days, fewer than basil stored at 18 °C, which lasted 7 days.",
+        is_correct: false,
+        trap_id: "RW_EVIDENCE_TOPIC_MATCH",
+        rationale:
+          "A correct reading of two rows that compares the wrong pair — neither is the moderate temperature the conclusion is about.",
+      },
+      {
+        id: "D",
+        text: "Basil stored at 10 °C lasted twice as long as basil stored at 2 °C.",
+        is_correct: false,
+        trap_id: "RW_HALF_RIGHT",
+        rationale:
+          "Handles the colder half of the claim and drops the warmer half, so the conclusion is only half supported.",
+      },
+    ],
+    explanation: {
+      trap_first:
+        "Option B is the most striking number in the table, and picking the most striking number is what most students do on these. It is true. It supports a different claim.",
+      divergence_step:
+        "Write the claim out: 10 °C beats colder *and* warmer. Support has to cover both sides of that. B covers warm only, C covers neither, D covers cold only.",
+      correct_path:
+        "Choice A compares 10 °C against every other temperature tested, in both directions.",
+      key_move:
+        "State the claim in one sentence, then ask which rows of the table would have to be cited.",
+      remediation_cue:
+        "State the claim in one sentence, then ask what would have to be true.",
+    },
+    desmos: null,
+    targets_trap: "RW_EVIDENCE_TOPIC_MATCH",
+    clone_of: null,
+    clone_rung: null,
+    metadata: { estimated_time_seconds: 80, reading_level_grade: 9 },
+    provenance: {
+      source: "apex_authored",
+      generated_at: GENERATED_AT,
+      engine_version: "seed",
+      gate_passed: [...MC_GATES, "G06_RW_STIMULUS_BOUNDS"],
+      bank_status: "practice_pool",
+    },
+  },
+
+  // ---------------------------------------------------------------- q_013
+  {
+    id: "q_013",
+    schema_version: V,
+    assessment: "PSAT_8_9",
+    section: "reading_writing",
+    domain: "rw.standard_english_conventions",
+    skill: "rw.standard_english_conventions.form_structure_and_sense",
+    difficulty: "medium",
+    module_target: "practice_only",
+    format: "multiple_choice",
+    stimulus:
+      "The collection of letters that the museum acquired last spring ______ a side of the composer that his published writings carefully conceal: impatient, superstitious, and perpetually short of money.",
+    stimulus_word_count: 29,
+    prompt:
+      "Which choice completes the text so that it conforms to the conventions of Standard English?",
+    options: [
+      {
+        id: "A",
+        text: "reveal",
+        is_correct: false,
+        trap_id: "RW_SUBJECT_VERB_DISTANCE",
+        rationale:
+          "Agrees with 'letters', the nearest noun, rather than with 'collection', the actual subject.",
+      },
+      {
+        id: "B",
+        text: "reveals",
+        is_correct: true,
+        rationale:
+          "The subject is 'The collection', which is singular. Everything between it and the verb is a modifier.",
+      },
+      {
+        id: "C",
+        text: "have revealed",
+        is_correct: false,
+        trap_id: "RW_SUBJECT_VERB_DISTANCE",
+        rationale: "Plural again, and the tense shift does not rescue the agreement.",
+      },
+      {
+        id: "D",
+        text: "are revealing",
+        is_correct: false,
+        trap_id: "RW_SUBJECT_VERB_DISTANCE",
+        rationale: "Plural once more, this time disguised as a progressive.",
+      },
+    ],
+    explanation: {
+      trap_first:
+        "By the time you reach the blank you have just read 'letters', and a plural verb sounds correct because a plural noun is still in your ear. Three of the four options are built on that.",
+      divergence_step:
+        "'of letters that the museum acquired last spring' is a modifier. Strike it out and the sentence reads 'The collection ______ a side of the composer' — the subject was singular the whole time.",
+      correct_path: "The collection reveals.",
+      key_move: "Delete every modifier between the subject and the verb, then read them adjacent.",
+      remediation_cue:
+        "Strike out every prepositional phrase, then read subject and verb adjacent.",
+    },
+    desmos: null,
+    targets_trap: "RW_SUBJECT_VERB_DISTANCE",
+    clone_of: null,
+    clone_rung: null,
+    metadata: { estimated_time_seconds: 45, reading_level_grade: 9 },
+    provenance: {
+      source: "apex_authored",
+      generated_at: GENERATED_AT,
+      engine_version: "seed",
+      gate_passed: [...MC_GATES, "G06_RW_STIMULUS_BOUNDS"],
+      bank_status: "practice_pool",
+    },
+  },
+
+  // ---------------------------------------------------------------- q_014
+  {
+    id: "q_014",
+    schema_version: V,
+    assessment: "PSAT_8_9",
+    section: "math",
+    domain: "math.geometry_trig",
+    skill: "math.geometry_trig.right_triangles_and_trig",
+    difficulty: "medium",
+    module_target: "practice_only",
+    format: "multiple_choice",
+    stimulus:
+      "In right triangle ABC, the right angle is at C. Side AC has length 9 and side BC has length 12. Point M is the midpoint of side AB.",
+    prompt: "What is the length of segment CM?",
+    options: [
+      {
+        id: "A",
+        text: "15",
+        is_correct: false,
+        trap_id: "MATH_PREMATURE_STOP",
+        rationale:
+          "The Pythagorean step gives AB = 15, which feels like the answer because it is the hard part. The question asks for CM.",
+      },
+      {
+        id: "B",
+        text: "7.5",
+        is_correct: true,
+        rationale:
+          "Place C at the origin, A at (0, 9) and B at (12, 0). Then M is (6, 4.5) and CM = √(36 + 20.25) = √56.25 = 7.5 — half of AB, as the median to a right angle's hypotenuse always is.",
+      },
+      {
+        id: "C",
+        text: "10.5",
+        is_correct: false,
+        trap_id: "MATH_FORM_MISINTERPRETED",
+        rationale:
+          "Averages the two legs, (9 + 12)/2, applying the midpoint idea to the wrong segment.",
+      },
+      {
+        id: "D",
+        text: "6",
+        is_correct: false,
+        trap_id: "MATH_ARITHMETIC_SLIP",
+        rationale: "Halves the longer leg (12) instead of the hypotenuse.",
+      },
+    ],
+    explanation: {
+      trap_first:
+        "You compute AB = 15 and 15 is sitting right there in the options. It is the number the work produces, and it is not the segment you were asked about.",
+      divergence_step:
+        "AB is the hypotenuse; CM runs from the right angle to the middle of it. Finding AB is the setup, not the finish.",
+      correct_path:
+        "AB = √(9² + 12²) = 15. The median from the right angle to the hypotenuse is half the hypotenuse, so CM = 7.5. If you don't recall that fact, coordinates give it: C(0,0), A(0,9), B(12,0), M(6,4.5), CM = √56.25 = 7.5.",
+      key_move: "Recognise CM as the median to the hypotenuse — it is always half of it.",
+      remediation_cue: "Re-read the last clause of the question stem before selecting.",
+    },
+    desmos: {
+      recommended: false,
+      tier: 5,
+      play: "T5.GEOMETRY_LIMIT",
+      expressions: [],
+      read_off: "",
+      time_saved_estimate_seconds: 0,
+      restraint_note:
+        "There is no coordinate frame in the question, so Desmos only helps after you invent one — and once you have placed C, A and B on axes, the distance is faster by hand than by plotting. This is the item type where the calculator reliably loses.",
+    },
+    targets_trap: "MATH_PREMATURE_STOP",
+    clone_of: null,
+    clone_rung: null,
+    metadata: { estimated_time_seconds: 80, calculator_recommended: false },
+    provenance: {
+      source: "apex_authored",
+      generated_at: GENERATED_AT,
+      engine_version: "seed",
+      gate_passed: [...MC_GATES, "G09_DESMOS_BLOCK_PRESENT"],
+      bank_status: "practice_pool",
+    },
+  },
+
 ];
 
 export const SEED_QUESTIONS_BY_ID = new Map(SEED_QUESTIONS.map((q) => [q.id, q]));

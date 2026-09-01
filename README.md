@@ -44,6 +44,19 @@ npm run dev          # http://localhost:3000 — no database required
 npm run check        # spec consistency + typecheck + tests + build
 ```
 
+Requires **Node 20+** (Tailwind v4's native engine will not build on 18).
+
+Two optional environment variables, both with working defaults:
+
+| Variable | Default | Why you'd change it |
+|---|---|---|
+| `NEXT_PUBLIC_DESMOS_API_KEY` | Desmos's public demo key | Required before shipping to students — see `docs/OPEN-QUESTIONS.md` §C8 |
+| `NEXT_PUBLIC_DESMOS_API_VERSION` | `v1.11` | If the calculator script 404s, point it at a version Desmos currently publishes |
+
+The AI tutor needs no environment variable: the student adds their own Claude
+API key in the app, and it is stored in their browser and never sent to a
+server.
+
 The app defaults to an in-memory store seeded with an authored question bank,
 so the practice flow works immediately. For Postgres:
 
@@ -60,6 +73,22 @@ that fired by name, a trap-first explanation, every option's reasoning path,
 and the Desmos play → request a Mistake Clone and get the adversarial rung
 inserted straight after the item.
 
+**Embedded Desmos.** The real Desmos graphing calculator, available on every
+Math item as it is on the real test, seeded with the item's expressions when a
+play is recommended and deliberately still available when it isn't — learning
+when *not* to open it is Tier 5 of the Academy.
+
+**The Socratic tutor.** Calls `claude-opus-5` from the browser on the student's
+own key, with structured output validated against the tutor-turn schema and the
+system prompt served live from `prompts/`. Reachable only after an answer is
+submitted, and every turn passes the same boundary guard as the content engine.
+
+**The Test Sim**, as a shortened form (RW 2×4, Math 2×3) at the real
+per-question pace: server-authoritative timing, per-section adaptive routing,
+question navigator, Mark for Review, option eliminator, split screen, the break,
+and embedded Desmos. The report gives raw counts and refuses to invent a scaled
+score.
+
 Supporting machinery, all exercised by the test suite:
 
 * **Boundary enforcement** — prohibited keys and prose rejected at the seam.
@@ -71,22 +100,35 @@ Supporting machinery, all exercised by the test suite:
 * **Adaptive routing** — deterministic, versioned thresholds.
 * **Answer-key privacy** — the client never receives `is_correct`.
 
-## What is skeletal
+## What is not built
 
-* **Test Sim** — structure, timing rules and routing constants implemented and
-  displayed; form assembly, split-screen UI and scoring tables are not built.
-* **Desmos Academy** — the 5-tier curriculum and its plays are specified and
-  shown; the live Desmos environment is not wired up. Tiers 2 and 5 are already
-  being taught inside ordinary practice.
-* **BYOK Tutor** — client-side key storage and the availability gate work; the
-  conversation itself is not built.
-* **The LLM engine** — `BankEngine` serves authored items through the same
-  seam an LLM engine will use. The model-backed implementation is not written;
+* **Full-length sims.** The bank holds 14 authored items; a real administration
+  is 98. Raw→scaled conversion tables do not exist either, which is why the sim
+  report stops at raw counts.
+* **Desmos Academy exercises.** The 5-tier curriculum and its plays are
+  specified and displayed, and the calculator is embedded, but the per-tier
+  guided exercises are not written. Tiers 2 and 5 are taught inside ordinary
+  practice today through each item's `desmos` block.
+* **The LLM content engine.** `BankEngine` serves authored items through the
+  same seam an LLM engine will use — same request shape, same boundary scrub,
+  same validation gate. The model-backed implementation is not written;
   `prompts/content-engine.system.md` is what will drive it.
-* **The `pg` adapter** — written against `db/schema.sql` and typechecked, but
+* **Durable sim state.** Attempts live in memory and do not survive a restart.
+  `db/schema.sql` already defines `sim_attempts` / `sim_modules` as the
+  destination.
+* **The `pg` adapter.** Written against `db/schema.sql` and typechecked, but
   **never run against a live server**: the build container had the psql client
   and no Postgres server or Docker. Treat the first connection as the first
   test.
+
+### Verified how
+
+The practice flow, the sim (all four modules, the break, routing and the
+report), and the tutor's availability gate were driven in a real browser. **The
+Desmos embed could not be verified** — the build container's proxy blocks
+`desmos.com`, so only its failure path was exercised. The tutor's model call was
+not exercised either: that needs a real API key, which is the student's to
+supply.
 
 ## Layout
 
@@ -102,7 +144,9 @@ Supporting machinery, all exercised by the test suite:
 | [`prompts/`](prompts) | Deployable system prompts |
 | [`schemas/`](schemas) | JSON Schemas — the runtime contract, loaded and enforced at request time |
 | [`types/apex.ts`](types/apex.ts) | Shared types and constants |
-| [`tests/`](tests) | Vitest suite over the boundary, gate, calibration, routing and grading |
+| [`src/lib/sim/`](src/lib/sim) | Form assembly, flow, server-held timing and the sim report |
+| [`src/lib/tutor/`](src/lib/tutor) | BYOK tutor: schema, browser client, boundary check |
+| [`tests/`](tests) | Vitest suite over the boundary, gate, calibration, routing, grading and the sim |
 | [`scripts/validate.mjs`](scripts/validate.mjs) | Cross-artifact consistency check |
 
 Start at [`docs/00-master-architecture.md`](docs/00-master-architecture.md).

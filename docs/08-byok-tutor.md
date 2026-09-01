@@ -41,6 +41,23 @@ converts every question into a collaboration and destroys the calibration
 signal — the certainty rating would measure the tutor's confidence, not the
 student's.
 
+## 2b. Implementation status
+
+Built. The tutor calls `claude-opus-5` from the browser on the student's key,
+with structured output validated against
+[`schemas/tutor-turn.schema.json`](../schemas/tutor-turn.schema.json). The
+system prompt is served from
+[`prompts/socratic-tutor.system.md`](../prompts/socratic-tutor.system.md) at
+request time, so editing the spec changes the running tutor.
+
+Two properties are enforced in code rather than asked for in the prompt:
+
+* **Availability** — the panel is rendered only inside the review state, which
+  is unreachable until an answer is submitted. There is no flag that could be
+  wrong.
+* **The boundary** — every turn passes through the same `findViolations` guard
+  as the content engine. A turn that predicts a score is discarded, not shown.
+
 ## 3. Socratic contract
 
 Full prompt: [`prompts/socratic-tutor.system.md`](../prompts/socratic-tutor.system.md).

@@ -5,6 +5,13 @@ against the **in-test Bluebook Desmos build** before shipping; the embedded
 calculator is close to the public graphing calculator but should not be assumed
 identical feature-for-feature.
 
+**Implementation status.** The real Desmos Graphing Calculator is embedded in
+Practice (every Math item, as on the real test) and in the Test Sim, seeded with
+the item's expressions when the item recommends a play. It runs on Desmos's
+public demo API key — see [`OPEN-QUESTIONS.md`](./OPEN-QUESTIONS.md) §C8 before
+shipping. The per-tier Academy exercises are not built; Tiers 2 and 5 are
+currently taught inside ordinary practice through each item's `desmos` block.
+
 ## 1. Why this is a pillar and not a feature
 
 The digital Math section allows the Desmos graphing calculator on **every

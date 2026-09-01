@@ -4,6 +4,13 @@
 [`02-assessment-blueprints.md`](./02-assessment-blueprints.md). Verify against a
 live Bluebook practice test before release.
 
+**Implementation status.** Runnable as a **shortened form** (RW 2×4, Math 2×3)
+at the real per-question pace, with server-authoritative timing, per-section
+routing, the navigator, Mark for Review, the option eliminator, split screen,
+the break, and embedded Desmos. The report gives raw counts and no scaled score.
+Full-length forms need bank depth and conversion tables —
+[`OPEN-QUESTIONS.md`](./OPEN-QUESTIONS.md) §C10.
+
 ## 1. The rule that defines the pillar
 
 **During a simulation, the client makes zero calls to the AI engine.** Not for

@@ -36,3 +36,24 @@ export function routeAttempt(moduleOne: Record<Section, number>): Record<Section
     math: routeModuleTwo("math", moduleOne.math),
   };
 }
+
+/**
+ * The same routing decision applied to a shortened form.
+ *
+ * The threshold is expressed as the full form's ratio so a short sim routes on
+ * the same standard as a real one — it is the identical rule at a different
+ * length, not a second rule. Any change to THRESHOLD moves both.
+ */
+export function routeModuleTwoScaled(
+  section: Section,
+  moduleOneCorrect: number,
+  outOf: number
+): ModuleTarget {
+  if (outOf <= 0) throw new RangeError("module length must be positive");
+  if (moduleOneCorrect < 0 || moduleOneCorrect > outOf) {
+    throw new RangeError(`module 1 score ${moduleOneCorrect} is outside 0..${outOf}`);
+  }
+  const { correctOf, upperAtLeast } = THRESHOLD[section];
+  const needed = Math.ceil((upperAtLeast / correctOf) * outOf);
+  return moduleOneCorrect >= needed ? "module_2_upper" : "module_2_lower";
+}

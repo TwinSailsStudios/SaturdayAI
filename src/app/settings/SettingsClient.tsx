@@ -2,26 +2,27 @@
 
 import { useEffect, useState } from "react";
 import { Card, Pill } from "@/components/ui";
-
-const STORAGE_KEY = "apex.byok.key";
+import { TUTOR_KEY_STORAGE } from "@/components/TutorPanel";
+import { testKey, TutorError } from "@/lib/tutor/client";
 
 /**
  * BYOK key handling.
  *
  * The key is written to this browser's localStorage and nowhere else. It is
- * never sent to an Apex server — not in a body, a header, or a log line — which
- * is why this page is entirely client-side and there is no corresponding API
- * route to POST it to.
+ * never sent to an Apex server — not in a body, a header, or a log line —
+ * which is why this page is entirely client-side and there is no API route to
+ * POST it to. Even the "test" below calls Anthropic directly from the browser.
  */
 export default function SettingsClient() {
   const [key, setKey] = useState("");
   const [stored, setStored] = useState<string | null>(null);
   const [available, setAvailable] = useState(false);
+  const [testing, setTesting] = useState(false);
+  const [result, setResult] = useState<{ ok: boolean; text: string } | null>(null);
 
   useEffect(() => {
     try {
-      const existing = window.localStorage.getItem(STORAGE_KEY);
-      setStored(existing);
+      setStored(window.localStorage.getItem(TUTOR_KEY_STORAGE));
       setAvailable(true);
     } catch {
       // Private browsing or blocked site data. The tutor is simply unavailable.
@@ -31,9 +32,10 @@ export default function SettingsClient() {
 
   function save() {
     try {
-      window.localStorage.setItem(STORAGE_KEY, key);
+      window.localStorage.setItem(TUTOR_KEY_STORAGE, key);
       setStored(key);
       setKey("");
+      setResult(null);
     } catch {
       setAvailable(false);
     }
@@ -41,10 +43,24 @@ export default function SettingsClient() {
 
   function clear() {
     try {
-      window.localStorage.removeItem(STORAGE_KEY);
+      window.localStorage.removeItem(TUTOR_KEY_STORAGE);
       setStored(null);
+      setResult(null);
     } catch {
       setAvailable(false);
+    }
+  }
+
+  async function test() {
+    if (!stored) return;
+    setTesting(true);
+    setResult(null);
+    try {
+      setResult({ ok: true, text: await testKey(stored) });
+    } catch (e) {
+      setResult({ ok: false, text: describe(e) });
+    } finally {
+      setTesting(false);
     }
   }
 
@@ -53,8 +69,8 @@ export default function SettingsClient() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">AI Tutor key</h1>
         <p className="mt-1 max-w-2xl text-sm text-muted">
-          The Socratic tutor runs on your own model API key. Apex does not resell inference and
-          never receives your key.
+          The Socratic tutor runs on your own Claude API key, called directly from this browser.
+          Apex does not resell inference and never receives your key.
         </p>
       </div>
 
@@ -72,7 +88,7 @@ export default function SettingsClient() {
                 type="password"
                 value={key}
                 onChange={(e) => setKey(e.target.value)}
-                placeholder={stored ? "•••••••••• (a key is saved)" : "paste your API key"}
+                placeholder={stored ? "•••••••••• (a key is saved)" : "sk-ant-..."}
                 className="w-72 rounded border border-line bg-surface px-3 py-2 font-mono text-sm"
               />
               <button
@@ -83,16 +99,43 @@ export default function SettingsClient() {
                 Save
               </button>
               {stored && (
-                <button
-                  onClick={clear}
-                  className="rounded border border-line px-4 py-2 text-sm hover:border-muted"
-                >
-                  Remove
-                </button>
+                <>
+                  <button
+                    onClick={test}
+                    disabled={testing}
+                    className="rounded border border-line px-4 py-2 text-sm hover:border-muted disabled:opacity-40"
+                  >
+                    {testing ? "Testing…" : "Test key"}
+                  </button>
+                  <button
+                    onClick={clear}
+                    className="rounded border border-line px-4 py-2 text-sm hover:border-muted"
+                  >
+                    Remove
+                  </button>
+                </>
               )}
             </div>
             <p className="mt-3 text-xs text-muted">
               Status: {stored ? <Pill tone="good">key saved locally</Pill> : <Pill>no key</Pill>}
+            </p>
+            {result && (
+              <p className={`mt-2 text-sm ${result.ok ? "text-good" : "text-alert"}`}>
+                {result.text}
+              </p>
+            )}
+            <p className="mt-3 text-xs leading-relaxed text-muted">
+              Get a key at{" "}
+              <a
+                className="underline"
+                href="https://console.anthropic.com/settings/keys"
+                target="_blank"
+                rel="noreferrer"
+              >
+                console.anthropic.com
+              </a>
+              . You are billed by Anthropic for what the tutor uses — typically a fraction of a cent
+              per exchange.
             </p>
           </>
         )}
@@ -104,23 +147,33 @@ export default function SettingsClient() {
           <li>Practice, question open and unanswered — <strong>blocked</strong></li>
           <li>Practice, after answering — available</li>
           <li>Review and error log — available</li>
-          <li>Desmos Academy — available</li>
         </ul>
         <p className="mt-3 text-xs leading-relaxed text-muted">
           The &ldquo;after answering&rdquo; gate is deliberate. A tutor available before submission
           turns every question into a collaboration and destroys the calibration signal — the
-          certainty rating would measure the tutor&rsquo;s confidence, not yours.
+          certainty rating would measure the tutor&rsquo;s confidence, not yours. The gate is
+          enforced by where the tutor component can be rendered, not by a flag that could be wrong.
         </p>
       </Card>
 
-      <Card title="Not wired up yet">
-        <p className="text-sm leading-relaxed">
-          Key storage and the availability gate are implemented. The conversation itself — the
-          escalation ladder in <code className="text-xs">prompts/socratic-tutor.system.md</code>,
-          the error-log slice, and the direct browser-to-provider call — is not built. Rather than
-          fake a tutor, this page stops here.
-        </p>
+      <Card title="What it will and won't do">
+        <ul className="space-y-1 text-sm">
+          <li>Probes first, narrows second, hints third, works exactly one step at the end.</li>
+          <li>Never states the correct option letter while you are still working.</li>
+          <li>Gives you the answer if you ask twice — stonewalling teaches nothing.</li>
+          <li>Names the trap that fired, and the pattern if it has fired before.</li>
+          <li>
+            Cannot tell you a score, a projection, or a percentile. Its output passes through the
+            same boundary guard as the content engine, and a turn that crosses it is discarded
+            rather than shown.
+          </li>
+        </ul>
       </Card>
     </div>
   );
+}
+
+function describe(e: unknown): string {
+  if (e instanceof TutorError) return e.message;
+  return e instanceof Error ? e.message : "Unknown error.";
 }
