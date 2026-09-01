@@ -148,7 +148,52 @@ report deliberately gives raw counts and no scaled score. **Needed:** the bank
 depth to run a full form, and the raw→scaled conversion tables per assessment,
 before a sim result can be presented as a score.
 
-## D. Deferred / non-blocking
+## D. External question sources — **blocking**
+
+### D1. OpenSAT content provenance and licensing
+
+The bank holds 14 authored items; a full-length form needs 98. The obvious
+source of volume is an external open bank, and the strongest candidate is
+[OpenSAT](https://github.com/Anas099X/OpenSAT) (1,000+ SAT items, public JSON
+API). The architectural fit is analysed in
+[`10-external-question-sources.md`](./10-external-question-sources.md) — short
+version: it supplies stems, options and keys, supplies none of the trap mapping
+that makes an Apex item useful, and therefore wants an *enrichment* pipeline
+rather than an import.
+
+**The blocker is not technical.** OpenSAT ships a custom, non-standard licence
+rather than a recognised one. It forbids commercial use of the codebase, and
+separately states that the **database** may be used commercially.
+
+That grant cannot be relied on without knowing where the questions came from,
+because a licence only conveys rights the licensor holds. Two things make this
+worth checking properly rather than assuming:
+
+* SAT items and their official explanations are College Board copyright.
+* The explanation prose in OpenSAT's own sample follows the house style of
+  official practice material closely ("Choice A is the best answer. The
+  convention being tested is…"). That is a signal, not a finding — but it is
+  enough of one that provenance needs a real answer before any of it reaches a
+  product students pay for.
+
+**Needed, before any import work starts:**
+
+1. Where OpenSAT's items originate — authored, AI-generated, or reproduced from
+   official material. The repository does not say.
+2. A legal read on whether the database grant is one we can actually rely on,
+   given (1).
+3. If provenance is unclear or the answer is unfavourable: a different source,
+   a licensed bank, or a decision to keep authoring in-house and accept the
+   slower path to full-length sims.
+
+Do not treat "their licence says commercial use is fine" as the end of this
+question. Upstream permission does not cure upstream infringement, and the
+downstream party shipping to students carries the exposure.
+
+**Owner:** this is a legal/product decision, not an engineering one. Nothing in
+[`10`](./10-external-question-sources.md) should be built until it is answered.
+
+## E. Deferred / non-blocking
 
 * **Accessibility.** Screen-reader behaviour for the split-screen sim and for
   `stimulus_data` tables. Needs a pass before launch, not before build.

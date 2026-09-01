@@ -104,7 +104,9 @@ Supporting machinery, all exercised by the test suite:
 
 * **Full-length sims.** The bank holds 14 authored items; a real administration
   is 98. Raw→scaled conversion tables do not exist either, which is why the sim
-  report stops at raw counts.
+  report stops at raw counts. Sourcing that volume from an external bank is
+  analysed in [`docs/10-external-question-sources.md`](docs/10-external-question-sources.md)
+  and is blocked on a licensing question, not a technical one.
 * **Desmos Academy exercises.** The 5-tier curriculum and its plays are
   specified and displayed, and the calculator is embedded, but the per-tier
   guided exercises are not written. Tiers 2 and 5 are taught inside ordinary

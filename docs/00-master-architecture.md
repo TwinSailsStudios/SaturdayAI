@@ -169,6 +169,7 @@ docs/
   07-test-sim-fidelity.md       Bluebook-mirror requirements
   08-byok-tutor.md              decoupled tutor + key handling
   09-apex-loop.md               phase → engine posture mapping
+  10-external-question-sources.md  importing a third-party bank (unbuilt)
   OPEN-QUESTIONS.md             decisions required before build
 prompts/
   content-engine.system.md      deployable system prompt (generation)
